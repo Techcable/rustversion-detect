@@ -1,0 +1,7 @@
+[package]
+name = "runtime-rustversion"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rustversion = "1"

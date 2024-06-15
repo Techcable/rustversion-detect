@@ -1,0 +1,8 @@
+[package]
+name = "build-rustversion-detect"
+version = "0.1.0"
+edition = "2021"
+
+[build-dependencies]
+rustversion-detect = "0.1"
+

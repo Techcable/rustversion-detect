@@ -1,0 +1,9 @@
+[package]
+# Build-time benchmark for build.rs usage of rustversion
+name = "build-rustversion"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[build-dependencies]
+rustversion = "1"
