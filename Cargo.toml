@@ -8,7 +8,8 @@ description = "Detect rustc compiler version"
 edition = "2018"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/Techcable/rustversion-detect"
-# First version supporting Rust 2018
+# 1.31 - First version supporting Rust 2018
+# 1.32 - First version supporting `?` and `:literal` in macros
 rust-version = "1.31"
 
 [package.metadata.cdocs.rs]
