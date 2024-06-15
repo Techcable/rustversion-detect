@@ -1,13 +1,30 @@
 //! Defines the rust version types.
 
 use core::fmt::{self, Display, Formatter};
+use core::num::ParseIntError;
+use core::str::FromStr;
 
 use crate::date::Date;
+
+/// Specify a stable version (a [`StableVersionSpec`]).
+///
+/// Unfortunately, this does not work in a `const` setting.
+/// If that is required, please use [`StableVersionSpec::minor`] or [`StableVersionSpec::Major`] constructors.
+#[macro_export]
+macro_rules! spec {
+    ($($items:tt)+) => {{
+        let text = stringify!($($items)*);
+        match text.parse::<$crate::version::StableVersionSpec>() {
+            Ok(val) => val,
+            Err(e) => panic!("Invalid version spec {:?} ({:?})", text, e),
+        }
+    }};
+}
 
 /// Specifies a specific stable version, like `1.48`.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(has_non_exhaustive, non_exhaustive)]
-pub struct StableVersion {
+pub struct StableVersionSpec {
     /// The major version
     pub major: u32,
     /// The minor version
@@ -17,13 +34,13 @@ pub struct StableVersion {
     /// If this is `None`, it will match any patch version.
     pub patch: Option<u32>,
 }
-impl StableVersion {
+impl StableVersionSpec {
     /// Specify a minor version like `1.32`.
     #[inline]
     #[cfg_attr(has_track_caller, track_caller)]
     pub const fn minor(major: u32, minor: u32) -> Self {
         check_major_version(major);
-        StableVersion {
+        StableVersionSpec {
             major,
             minor,
             patch: None,
@@ -35,7 +52,7 @@ impl StableVersion {
     #[cfg_attr(has_track_caller, track_caller)]
     pub const fn patch(major: u32, minor: u32, patch: u32) -> Self {
         check_major_version(major);
-        StableVersion {
+        StableVersionSpec {
             major,
             minor,
             patch: Some(patch),
@@ -61,9 +78,57 @@ impl StableVersion {
         }
     }
 }
+impl FromStr for StableVersionSpec {
+    type Err = StableVersionParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut iter = s.split('.');
+        let major = iter
+            .next()
+            .ok_or(StableVersionParseError::BadNumberParts)?
+            .parse::<u32>()?;
+        let minor = iter
+            .next()
+            .ok_or(StableVersionParseError::BadNumberParts)?
+            .parse::<u32>()?;
+        let patch = match iter.next() {
+            Some(patch_text) => Some(patch_text.parse::<u32>()?),
+            None => None,
+        };
+        if iter.next().is_some() {
+            return Err(StableVersionParseError::BadNumberParts);
+        }
+        if major != 1 {
+            return Err(StableVersionParseError::InvalidMajorVersion);
+        }
+        Ok(StableVersionSpec {
+            major,
+            minor,
+            patch,
+        })
+    }
+}
+
+/// An error while parsing a [`StableVersionSpec`].
+///
+/// The specifics of this error are implementation-dependent.
+#[derive(Clone, Debug)]
+#[cfg_attr(has_non_exhaustive, non_exhaustive)]
+#[doc(hidden)]
+pub enum StableVersionParseError {
+    InvalidNumber(ParseIntError),
+    BadNumberParts,
+    InvalidMajorVersion,
+}
+impl From<ParseIntError> for StableVersionParseError {
+    #[inline]
+    fn from(cause: ParseIntError) -> Self {
+        StableVersionParseError::InvalidNumber(cause)
+    }
+}
 
 /// Show the specification in a manner consistent with the `spec!` macro.
-impl Display for StableVersion {
+impl Display for StableVersionSpec {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}.{}", self.major, self.minor)?;
         if let Some(patch) = self.patch {
@@ -120,12 +185,12 @@ impl RustVersion {
         ///
         /// ## Example
         /// ```
-        /// # use rustversion_detect::{RustVersion, StableVersion};
+        /// # use rustversion_detect::{RustVersion, StableVersionSpec};
         ///
-        /// assert!(RustVersion::stable(1, 32, 2).is_since(StableVersion::minor(1, 32)));
-        /// assert!(RustVersion::stable(1, 48, 0).is_since(StableVersion::patch(1, 32, 7)))
+        /// assert!(RustVersion::stable(1, 32, 2).is_since(StableVersionSpec::minor(1, 32)));
+        /// assert!(RustVersion::stable(1, 48, 0).is_since(StableVersionSpec::patch(1, 32, 7)))
         /// ```
-        pub const fn is_since(&self, spec: StableVersion) -> bool {
+        pub const fn is_since(&self, spec: StableVersionSpec) -> bool {
             self.major > spec.major
                 || (self.major == spec.major
                     && (self.minor > spec.minor
@@ -143,7 +208,7 @@ impl RustVersion {
         /// The negation of [`Self::is_since`].
         ///
         /// Behavior is (mostly) equivalent to `#[rustversion::before($spec)]`
-        pub const fn is_before(&self, spec: StableVersion) -> bool {
+        pub const fn is_before(&self, spec: StableVersionSpec) -> bool {
             !self.is_since(spec)
         }
 
@@ -218,9 +283,9 @@ impl RustVersion {
     }
 }
 
-impl From<StableVersion> for RustVersion {
+impl From<StableVersionSpec> for RustVersion {
     #[inline]
-    fn from(value: StableVersion) -> Self {
+    fn from(value: StableVersionSpec) -> Self {
         value.to_version()
     }
 }
@@ -317,7 +382,7 @@ const fn check_major_version(major: u32) {
 
 #[cfg(test)]
 mod test {
-    use super::{RustVersion, StableVersion};
+    use super::{RustVersion, StableVersionSpec};
 
     // (before, after)
     const VERSIONS: &[(RustVersion, RustVersion)] = &[
@@ -328,9 +393,16 @@ mod test {
     #[cfg(test)]
     impl RustVersion {
         #[inline]
-        pub fn to_spec(&self) -> StableVersion {
-            StableVersion::patch(self.major, self.minor, self.patch)
+        pub fn to_spec(&self) -> StableVersionSpec {
+            StableVersionSpec::patch(self.major, self.minor, self.patch)
         }
+    }
+
+    #[test]
+    fn test_spec_macro() {
+        assert_eq!(spec!(1.40), StableVersionSpec::minor(1, 40));
+        assert_eq!(spec!(1.12.3), StableVersionSpec::patch(1, 12, 3));
+        assert!(RustVersion::stable(1, 12, 8).is_since(spec!(1.12.3)));
     }
 
     #[test]

@@ -8,7 +8,7 @@ pub mod date;
 pub mod version;
 
 pub use crate::date::Date;
-pub use crate::version::{Channel, RustVersion, StableVersion};
+pub use crate::version::{Channel, RustVersion, StableVersionSpec};
 
 /// The detected rust compiler version.
 pub const RUST_VERSION: RustVersion = self::detected::DETECTED_VERSION;
