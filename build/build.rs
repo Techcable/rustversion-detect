@@ -1,9 +1,3 @@
-#![allow(
-    clippy::enum_glob_use,
-    clippy::must_use_candidate,
-    clippy::single_match_else
-)]
-
 mod rustc;
 
 use std::env;
@@ -60,7 +54,7 @@ fn main() {
             rustc::ParseResult::Unrecognized | rustc::ParseResult::OopsClippy => {
                 eprintln!(
                     "Error: unexpected output from `rustc --version`: {:?}\n\n\
-                    Please file an issue in https://github.com/dtolnay/rustversion",
+                    Please file an issue in https://github.com/Techcable/rustversion-detect",
                     string
                 );
                 process::exit(1);
@@ -68,13 +62,34 @@ fn main() {
         };
     };
 
-    if version.minor < 38 {
-        // Prior to 1.38, a #[proc_macro] is not allowed to be named `cfg`.
-        println!("cargo:rustc-cfg=cfg_macro_not_allowed");
+    if version.major != 1 {
+        eprintln!(
+            "Error: Only major version 1.0 supported (got {:?})",
+            version
+        );
+        process::exit(1);
+    }
+
+    // NOTE: sorted by version.minor
+
+    if version.minor >= 40 {
+        println!("cargo:rustc-cfg=has_non_exhaustive")
+    }
+
+    if version.minor >= 46 {
+        println!("cargo:rustc-cfg=has_const_match");
+        println!("cargo:rustc-cfg=has_track_caller")
+    }
+
+    if version.minor >= 57 {
+        println!("cargo:rustc-cfg=has_const_panic")
     }
 
     if version.minor >= 80 {
-        println!("cargo:rustc-check-cfg=cfg(cfg_macro_not_allowed)");
+        println!("cargo:rustc-check-cfg=cfg(has_non_exhaustive)");
+        println!("cargo:rustc-check-cfg=cfg(has_const_match)");
+        println!("cargo:rustc-check-cfg=cfg(has_track_caller)");
+        println!("cargo:rustc-check-cfg=cfg(has_const_panic)");
         println!("cargo:rustc-check-cfg=cfg(host_os, values(\"windows\"))");
     }
 

@@ -1,39 +1,33 @@
-#![allow(clippy::semicolon_if_nothing_returned)] // https://github.com/rust-lang/rust-clippy/issues/7324
+use rustversion_detect::maybe_const_fn;
 
-#[rustversion::attr(all(), const)]
-fn _basic() {}
+maybe_const_fn! {
+    #[cfg_const(all())] // always true
+    const fn _basic() {}
+}
 const _BASIC: () = _basic();
 
-#[rustversion::attr(all(), const)]
-unsafe fn _unsafe() {}
+maybe_const_fn! {
+    #[cfg_const(all())]
+    const {unsafe} fn _unsafe() {}
+}
 const _UNSAFE: () = unsafe { _unsafe() };
 
-macro_rules! item {
-    ($i:item) => {
-        #[rustversion::attr(all(), const)]
-        $i
-    };
-}
-
-item! {fn _item() {}}
-const _ITEM: () = _item();
-
+/// using `:item` matcher won't work, but `:ident` matcher will
 macro_rules! ident {
     ($fn:ident) => {
-        #[rustversion::attr(all(), const)]
-        $fn _ident() {}
+        maybe_const_fn! {
+            #[cfg_const(all())]
+            const $fn _ident() {}
+        }
     };
 }
 
 ident! {fn}
 const _IDENT: () = _ident();
 
-#[rustversion::attr(all(), const)]
-/// doc
-fn _doc_below() {}
+maybe_const_fn! {
+    #[cfg_const(all())]
+    /// doc
+    const fn _doc_below() {}
+}
 const _DOC_BELOW: () = _doc_below();
-
-/// doc
-#[rustversion::attr(all(), const)]
-fn _doc_above() {}
-const _DOC_ABOVE: () = _doc_above();

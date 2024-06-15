@@ -1,5 +1,4 @@
 use self::Channel::*;
-use std::fmt::{self, Debug};
 
 pub enum ParseResult {
     Success(Version),
@@ -7,14 +6,19 @@ pub enum ParseResult {
     Unrecognized,
 }
 
+#[derive(Debug)]
 #[cfg_attr(test, derive(PartialEq))]
+#[allow(dead_code)] // used by Debug
 pub struct Version {
+    pub major: u16,
     pub minor: u16,
     pub patch: u16,
     pub channel: Channel,
 }
 
+#[derive(Debug)]
 #[cfg_attr(test, derive(PartialEq))]
+#[allow(dead_code)] // used by Debug
 pub enum Channel {
     Stable,
     Beta,
@@ -22,7 +26,9 @@ pub enum Channel {
     Dev,
 }
 
+#[derive(Debug)]
 #[cfg_attr(test, derive(PartialEq))]
+#[allow(dead_code)] // used by Debug
 pub struct Date {
     pub year: u16,
     pub month: u8,
@@ -48,10 +54,7 @@ fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<Version> {
     let channel = version_channel.next();
 
     let mut digits = version.split('.');
-    let major = digits.next()?;
-    if major != "1" {
-        return None;
-    }
+    let major = digits.next()?.parse().ok()?;
     let minor = digits.next()?.parse().ok()?;
     let patch = digits.next().unwrap_or("0").parse().ok()?;
 
@@ -81,44 +84,9 @@ fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<Version> {
     };
 
     Some(Version {
+        major,
         minor,
         patch,
         channel,
     })
-}
-
-impl Debug for Version {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter
-            .debug_struct("crate::version::Version")
-            .field("minor", &self.minor)
-            .field("patch", &self.patch)
-            .field("channel", &self.channel)
-            .finish()
-    }
-}
-
-impl Debug for Channel {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Channel::Stable => formatter.write_str("crate::version::Channel::Stable"),
-            Channel::Beta => formatter.write_str("crate::version::Channel::Beta"),
-            Channel::Nightly(date) => formatter
-                .debug_tuple("crate::version::Channel::Nightly")
-                .field(date)
-                .finish(),
-            Channel::Dev => formatter.write_str("crate::version::Channel::Dev"),
-        }
-    }
-}
-
-impl Debug for Date {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter
-            .debug_struct("crate::date::Date")
-            .field("year", &self.year)
-            .field("month", &self.month)
-            .field("day", &self.day)
-            .finish()
-    }
 }

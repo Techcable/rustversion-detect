@@ -1,9 +1,3 @@
-#![allow(
-    clippy::derive_partial_eq_without_eq,
-    clippy::enum_glob_use,
-    clippy::must_use_candidate
-)]
-
 include!("../build/rustc.rs");
 
 #[test]
@@ -12,6 +6,7 @@ fn test_parse() {
         (
             "rustc 1.0.0 (a59de37e9 2015-05-13) (built 2015-05-14)",
             Version {
+                major: 1,
                 minor: 0,
                 patch: 0,
                 channel: Stable,
@@ -20,6 +15,7 @@ fn test_parse() {
         (
             "rustc 1.18.0",
             Version {
+                major: 1,
                 minor: 18,
                 patch: 0,
                 channel: Stable,
@@ -28,6 +24,7 @@ fn test_parse() {
         (
             "rustc 1.24.1 (d3ae9a9e0 2018-02-27)",
             Version {
+                major: 1,
                 minor: 24,
                 patch: 1,
                 channel: Stable,
@@ -36,6 +33,7 @@ fn test_parse() {
         (
             "rustc 1.35.0-beta.3 (c13114dc8 2019-04-27)",
             Version {
+                major: 1,
                 minor: 35,
                 patch: 0,
                 channel: Beta,
@@ -44,6 +42,7 @@ fn test_parse() {
         (
             "rustc 1.36.0-nightly (938d4ffe1 2019-04-27)",
             Version {
+                major: 1,
                 minor: 36,
                 patch: 0,
                 channel: Nightly(Date {
@@ -56,6 +55,7 @@ fn test_parse() {
         (
             "rustc 1.36.0-dev",
             Version {
+                major: 1,
                 minor: 36,
                 patch: 0,
                 channel: Dev,
@@ -64,6 +64,7 @@ fn test_parse() {
         (
             "rustc 1.36.0-nightly",
             Version {
+                major: 1,
                 minor: 36,
                 patch: 0,
                 channel: Dev,
@@ -73,6 +74,7 @@ fn test_parse() {
             "warning: invalid logging spec 'warning', ignoring it
              rustc 1.30.0-nightly (3bc2ca7e4 2018-09-20)",
             Version {
+                major: 1,
                 minor: 30,
                 patch: 0,
                 channel: Nightly(Date {
@@ -85,6 +87,7 @@ fn test_parse() {
         (
             "rustc 1.52.1-nightly (gentoo)",
             Version {
+                major: 1,
                 minor: 52,
                 patch: 1,
                 channel: Dev,
