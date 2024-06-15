@@ -6,8 +6,10 @@ It is primarily intended for build scripts, but is also usable at runtime.
 
 The implementation is forked from the [`rustversion` crate], but with proc-macro code removed.
 
-[`rustversion` crate](https://github.com/dtolnay/rustversion)
+[`rustversion` crate]: https://github.com/dtolnay/rustversion
 
+## Dependency
+Add the following to your build script:
 ```toml
 [build-dependencies]
 rustversion-detect = "0.1"
