@@ -9,7 +9,7 @@ use crate::date::Date;
 /// Specify a stable version (a [`StableVersionSpec`]).
 ///
 /// Unfortunately, this does not work in a `const` setting.
-/// If that is required, please use [`StableVersionSpec::minor`] or [`StableVersionSpec::Major`] constructors.
+/// If that is required, please use [`StableVersionSpec::minor`] or [`StableVersionSpec::major`] constructors.
 #[macro_export]
 macro_rules! spec {
     ($($items:tt)+) => {{
