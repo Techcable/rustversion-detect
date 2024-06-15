@@ -12,7 +12,7 @@ repository = "https://github.com/Techcable/rustversion-detect"
 # 1.32 - First version supporting `?` and `:literal` in macros
 rust-version = "1.31"
 # Exclude compile benchmarks & git metadata
-exclude = ["/compilebench", "/.github", ".gitignore"]
+exclude = ["/benchcompile", "/.github", ".gitignore"]
 
 [package.metadata.cdocs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
