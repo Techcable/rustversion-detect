@@ -42,41 +42,45 @@ impl Date {
         Date { year, month, day }
     }
 
-    /// Check if this date is equal to or after the specified start.
-    ///
-    /// Equivalent to `self >= start`,
-    /// but available as a `const` function.
-    ///
-    /// ## Example
-    /// ```
-    /// # use rustversion_detect::date;;
-    ///
-    /// assert!(date!(2024-11-16).is_since(date!(2024-7-28)));
-    /// ```
-    #[inline]
-    pub const fn is_since(&self, start: Date) -> bool {
-        self.year > start.year
-            || (self.year == start.year
-                && (self.month > start.month
-                    || (self.month == start.month && self.day >= start.day)))
-    }
+    maybe_const_fn! {
+        #[cfg_const(has_const_match)]
+        /// Check if this date is equal to or after the specified start.
+        ///
+        /// Equivalent to `self >= start`,
+        /// but available as a `const` function.
+        ///
+        /// ## Example
+        /// ```
+        /// # use rustversion_detect::date;;
+        ///
+        /// assert!(date!(2024-11-16).is_since(date!(2024-7-28)));
+        /// ```
+        #[inline]
+        pub const fn is_since(&self, start: Date) -> bool {
+            self.year > start.year
+                || (self.year == start.year
+                    && (self.month > start.month
+                        || (self.month == start.month && self.day >= start.day)))
+        }
 
-    /// Check if this date is before the specified end.
-    ///
-    /// Equivalent to `self < end`,
-    /// but available as a `const` function.
-    ///
-    /// ## Example
-    /// ```
-    /// # use rustversion_detect::date;
-    ///
-    /// assert!(date!(2018-12-14).is_before(date!(2022-8-16)));
-    /// assert!(date!(2024-11-14).is_before(date!(2024-12-7)));
-    /// assert!(date!(2024-11-14).is_before(date!(2024-11-17)));
-    /// ```
-    #[inline]
-    pub const fn is_before(&self, end: Date) -> bool {
-        !self.is_since(end)
+        #[cfg_const(has_const_match)]
+        /// Check if this date is before the specified end.
+        ///
+        /// Equivalent to `self < end`,
+        /// but available as a `const` function.
+        ///
+        /// ## Example
+        /// ```
+        /// # use rustversion_detect::date;
+        ///
+        /// assert!(date!(2018-12-14).is_before(date!(2022-8-16)));
+        /// assert!(date!(2024-11-14).is_before(date!(2024-12-7)));
+        /// assert!(date!(2024-11-14).is_before(date!(2024-11-17)));
+        /// ```
+        #[inline]
+        pub const fn is_before(&self, end: Date) -> bool {
+            !self.is_since(end)
+        }
     }
 }
 

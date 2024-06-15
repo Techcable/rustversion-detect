@@ -39,6 +39,7 @@ impl StableVersionSpec {
     #[inline]
     #[cfg_attr(has_track_caller, track_caller)]
     pub const fn minor(major: u32, minor: u32) -> Self {
+        #[cfg(has_const_panic)]
         check_major_version(major);
         StableVersionSpec {
             major,
@@ -51,6 +52,7 @@ impl StableVersionSpec {
     #[inline]
     #[cfg_attr(has_track_caller, track_caller)]
     pub const fn patch(major: u32, minor: u32, patch: u32) -> Self {
+        #[cfg(has_const_panic)]
         check_major_version(major);
         StableVersionSpec {
             major,
@@ -164,6 +166,7 @@ impl RustVersion {
     #[inline]
     #[cfg_attr(has_track_caller, track_caller)]
     pub const fn stable(major: u32, minor: u32, patch: u32) -> RustVersion {
+        #[cfg(has_const_panic)]
         check_major_version(major);
         RustVersion {
             major,
@@ -369,15 +372,11 @@ impl Channel {
     }
 }
 
-//noinspection RsAssertEqual
 #[inline]
 #[cfg_attr(has_track_caller, track_caller)]
+#[cfg(has_const_panic)]
 const fn check_major_version(major: u32) {
-    #[cfg(has_const_panic)]
-    {
-        assert!(major == 1, "Major version must be 1.*");
-    }
-    let _ = major;
+    assert!(major == 1, "Major version must be 1.*");
 }
 
 #[cfg(test)]
