@@ -10,6 +10,7 @@ use crate::date::Date;
 ///
 /// Unfortunately, this does not work in a `const` setting.
 /// If that is required, please use [`StableVersionSpec::minor`] or [`StableVersionSpec::major`] constructors.
+#[deprecated(note = "Please use helper methods (is_since_minor/is_since_patch)")]
 #[macro_export]
 macro_rules! spec {
     ($($items:tt)+) => {{
@@ -178,11 +179,59 @@ impl RustVersion {
 
     maybe_const_fn! {
         #[cfg_const(has_const_match)]
+        #[cfg_attr(has_track_caller, track_caller)]
         #[inline]
-        /// Check if this version is after the specified stable version,
+        /// Check if this version is after the specified stable minor version.
         ///
-        /// Ignores the channel.
-        /// The negation of [`Self::is_before`].
+        /// The patch version is unspecified and will be ignored.
+        ///
+        /// This is a shorthand for calling [`Self::is_since_stable`] with a minor version
+        /// spec created with [`StableVersionSpec::minor`].
+        ///
+        /// The major version must always be one, or a panic could happen.
+        ///
+        /// ## Example
+        /// ```
+        /// # use rustversion_detect::RustVersion;
+        ///
+        /// assert!(RustVersion::stable(1, 32, 2).is_since_minor_version(1, 32));
+        /// assert!(RustVersion::stable(1, 48, 0).is_since_minor_version(1, 40));
+        /// ```
+        pub const fn is_since_minor_version(&self, major: u32, minor: u32) -> bool {
+            self.is_since_stable(StableVersionSpec::minor(major, minor))
+        }
+
+        #[cfg_const(has_const_match)]
+        #[cfg_attr(has_track_caller, track_caller)]
+        #[inline]
+        /// Check if this version is after the specified stable patch version.
+        ///
+        /// This is a shorthand for calling [`Self::is_since_stable`] with a patch version
+        /// spec created with [`StableVersionSpec::patch`].
+        ///
+        /// The major version must always be one, or a panic could happen.
+        ///
+        /// ## Example
+        /// ```
+        /// # use rustversion_detect::RustVersion;
+        ///
+        /// assert!(RustVersion::stable(1, 32, 2).is_since_patch_version(1, 32, 1));
+        /// assert!(RustVersion::stable(1, 48, 0).is_since_patch_version(1, 40, 5));
+        /// ```
+        pub const fn is_since_patch_version(&self, major: u32, minor: u32, patch: u32) -> bool {
+            self.is_since_stable(StableVersionSpec::patch(major, minor, patch))
+        }
+
+        #[cfg_const(has_const_match)]
+        #[inline]
+        /// Check if this version is after the given [stable version spec](StableVersionSpec).
+        ///
+        /// In general, the [`Self::is_since_minor_version`] and [`Self::is_since_patch_version`]
+        /// helper methods are preferable.
+        ///
+        /// This ignores the channel.
+        ///
+        /// The negation of [`Self::is_before_stable`].
         ///
         /// Behavior is (mostly) equivalent to `#[rustversion::since($spec)]`
         ///
@@ -190,10 +239,10 @@ impl RustVersion {
         /// ```
         /// # use rustversion_detect::{RustVersion, StableVersionSpec};
         ///
-        /// assert!(RustVersion::stable(1, 32, 2).is_since(StableVersionSpec::minor(1, 32)));
-        /// assert!(RustVersion::stable(1, 48, 0).is_since(StableVersionSpec::patch(1, 32, 7)))
+        /// assert!(RustVersion::stable(1, 32, 2).is_since_stable(StableVersionSpec::minor(1, 32)));
+        /// assert!(RustVersion::stable(1, 48, 0).is_since_stable(StableVersionSpec::patch(1, 32, 7)))
         /// ```
-        pub const fn is_since(&self, spec: StableVersionSpec) -> bool {
+        pub const fn is_since_stable(&self, spec: StableVersionSpec) -> bool {
             self.major > spec.major
                 || (self.major == spec.major
                     && (self.minor > spec.minor
@@ -205,14 +254,69 @@ impl RustVersion {
 
         #[cfg_const(has_const_match)]
         #[inline]
-        /// Check if the version is greater than or equal to the specified version specification.
+        /// Check if the version is less than the given [stable version spec](StableVersionSpec).
         ///
-        /// Ignores the channel.
-        /// The negation of [`Self::is_since`].
+        /// This ignores the channel.
+        ///
+        /// In general, the [`Self::is_before_minor_version`] and [`Self::is_before_patch_version`]
+        /// helper methods are preferable.
+        ///
+        /// The negation of [`Self::is_since_stable`].
         ///
         /// Behavior is (mostly) equivalent to `#[rustversion::before($spec)]`
+        pub const fn is_before_stable(&self, spec: StableVersionSpec) -> bool {
+            !self.is_since_stable(spec)
+        }
+
+
+        #[cfg_const(has_const_match)]
+        #[cfg_attr(has_track_caller, track_caller)]
+        #[inline]
+        /// Check if this version is before the specified stable minor version.
+        ///
+        /// The patch version is unspecified and will be ignored.
+        ///
+        /// This is a shorthand for calling [`Self::is_before_stable`] with a minor version
+        /// spec created with [`StableVersionSpec::minor`].
+        ///
+        /// The major version must always be one, or a panic could happen.
+        pub const fn is_before_minor_version(&self, major: u32, minor: u32) -> bool {
+            self.is_before_stable(StableVersionSpec::minor(major, minor))
+        }
+
+        #[cfg_const(has_const_match)]
+        #[cfg_attr(has_track_caller, track_caller)]
+        #[inline]
+        /// Check if this version is before the specified stable patch version.
+        ///
+        /// This is a shorthand for calling [`Self::is_before_stable`] with a patch version
+        /// spec created with [`StableVersionSpec::patch`].
+        ///
+        /// The major version must always be one, or a panic could happen.
+        pub const fn is_before_patch_version(&self, major: u32, minor: u32, patch: u32) -> bool {
+            self.is_before_stable(StableVersionSpec::patch(major, minor, patch))
+        }
+
+        #[cfg_const(has_const_match)]
+        #[deprecated(note = "Please use `is_since_stable` or the helper methods")]
+        #[inline]
+        /// Old name of [`Self::is_since_stable`].
+        ///
+        /// Deprecated due to unclear naming and preference for
+        /// helper methods [`Self::is_since_minor_version`].
+        pub const fn is_since(&self, spec: StableVersionSpec) -> bool {
+            self.is_since_stable(spec)
+        }
+
+        #[cfg_const(has_const_match)]
+        #[deprecated(note = "Please use `is_before_stable` or the helper methods")]
+        #[inline]
+        /// Old name of [`Self::is_before_stable`]
+        ///
+        /// Deprecated due to unclear naming and preference for
+        /// helper methods like [`Self::is_before_minor_version`].
         pub const fn is_before(&self, spec: StableVersionSpec) -> bool {
-            !self.is_since(spec)
+            self.is_before_stable(spec)
         }
 
         #[cfg_const(has_const_match)]
@@ -397,7 +501,9 @@ mod test {
         }
     }
 
+    // TODO: Remove this test
     #[test]
+    #[allow(deprecated)] // spec! macro is deprecated
     fn test_spec_macro() {
         assert_eq!(spec!(1.40), StableVersionSpec::minor(1, 40));
         assert_eq!(spec!(1.12.3), StableVersionSpec::patch(1, 12, 3));
@@ -407,8 +513,18 @@ mod test {
     #[test]
     fn test_before_after() {
         for (before, after) in VERSIONS {
-            assert!(before.is_before(after.to_spec()), "{} & {}", before, after);
-            assert!(after.is_since(before.to_spec()), "{} & {}", before, after);
+            assert!(
+                before.is_before_stable(after.to_spec()),
+                "{} & {}",
+                before,
+                after
+            );
+            assert!(
+                after.is_since_stable(before.to_spec()),
+                "{} & {}",
+                before,
+                after
+            );
         }
     }
 }
