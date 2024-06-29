@@ -1,4 +1,6 @@
 # rustversion-detect
+<!-- cargo-rdme start -->
+
 This crate provides a simple API for detecting the rustc
 compiler version.
 
@@ -14,6 +16,8 @@ Add the following to your build script:
 [build-dependencies]
 rustversion-detect = "0.1"
 ```
+
+<!-- cargo-rdme end -->
 
 ## License
 Licensed under either of <a href="LICENSE-APACHE">Apache License, Version
