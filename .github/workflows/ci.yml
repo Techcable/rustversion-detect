@@ -72,6 +72,18 @@ jobs:
       - uses: dtolnay/install@cargo-docs-rs
       - run: cargo docs-rs
 
+  cargo-rdme:
+    name: cargo-rdme --check
+    needs: pre_ci
+    if: needs.pre_ci.outputs.continue
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@cargo-rdme
+      - run: cargo rdme --check
+
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
