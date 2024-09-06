@@ -84,6 +84,15 @@ jobs:
       - uses: taiki-e/install-action@cargo-rdme
       - run: cargo rdme --check
 
+  linkcheck-lychee:
+    name: Link Checker
+    needs: pre_ci
+    if: needs.pre_ci.outputs.continue
+    runs-on: ubuntu-latest
+    steps:
+      - uses: lycheeverse/lychee-action@v1
+      - uses: lycheeverse/lychee-action@v1
+
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
