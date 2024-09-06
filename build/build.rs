@@ -72,6 +72,11 @@ fn main() {
 
     // NOTE: sorted by version.minor
 
+    if version.minor >= 32 {
+        // Support for $x:literal
+        println!("cargo:rustc-cfg=supports_macro_literal");
+    }
+
     if version.minor >= 40 {
         println!("cargo:rustc-cfg=has_non_exhaustive")
     }
@@ -86,6 +91,7 @@ fn main() {
     }
 
     if version.minor >= 80 {
+        println!("cargo:rustc-check-cfg=cfg(supports_macro_literal)");
         println!("cargo:rustc-check-cfg=cfg(has_non_exhaustive)");
         println!("cargo:rustc-check-cfg=cfg(has_const_match)");
         println!("cargo:rustc-check-cfg=cfg(has_track_caller)");

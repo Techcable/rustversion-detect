@@ -140,8 +140,10 @@ macro_rules! maybe_const_fn {
         $visibility:vis const
         // extra "specifiers" like `async` `unsafe` `extern "C"`
         // needs to be surrounded with {...} due to macro limitations
-        $({$($extra_spec:tt)*})?
-        fn $name:ident ($($args:tt)*) $( -> $return_tp:ty)? $code:block
+        //
+        // NOTE: Need to use $()* because $()? not supported on 1.31
+        $({$($extra_spec:tt)*})*
+        fn $name:ident ($($args:tt)*) $( -> $return_tp:ty)* $code:block
     )*) => {$(
         #[cfg($cond)]
         $(#[$attr])*

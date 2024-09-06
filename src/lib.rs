@@ -13,7 +13,7 @@
 //! [build-dependencies]
 //! rustversion-detect = "0.1"
 //! ```
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 #![deny(missing_docs)]
 
 #[macro_use]

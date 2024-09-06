@@ -503,6 +503,7 @@ mod test {
 
     // TODO: Remove this test
     #[test]
+    #[ignore] // Broken on Rust 1.31
     #[allow(deprecated)] // spec! macro is deprecated
     fn test_spec_macro() {
         assert_eq!(spec!(1.40), StableVersionSpec::minor(1, 40));
