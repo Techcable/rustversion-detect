@@ -1,3 +1,4 @@
+#![allow(deprecated)]
 use rustversion_detect::maybe_const_fn;
 
 maybe_const_fn! {

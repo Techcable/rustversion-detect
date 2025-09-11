@@ -11,7 +11,7 @@
 /// please use the `rustversion` procedural macro.
 /// That is more robust and supports other markers like `unsafe` and `async`.
 ///
-/// ## Example
+/// # Example
 /// ```
 /// # use rustversion_detect::maybe_const_fn;
 ///
@@ -32,12 +32,12 @@
 /// const FOO: u32 = example();
 /// ```
 ///
-/// ## Limitations
+/// # Limitations
 /// Please remember to always place `const` before the `fn` declaration.
-/// Otherwise, the macro will give a value error.
+/// Otherwise, the macro will give an error.
 ///
 /// The `#[cfg_const(...)]` marker must be the first attitude declaration.
-/// All other attributes and documentation comments must come after the `#[cfg_const(..)]` declartion.
+/// All other attributes and documentation comments must come after the `#[cfg_const(..)]` declaration.
 ///
 /// The following two examples are **broken**:
 /// ```compile_fail
@@ -104,7 +104,7 @@
 /// const FOO: u32 = unsafe { example() };
 /// ```
 ///
-/// ### Macro Forwarding
+/// ## Macro Forwarding
 /// When [forwarding a matched fragment] inside another macro,
 /// the outer macro cannot use fragment specifiers like `item`
 /// for the constant function declaration.
@@ -133,6 +133,7 @@
 ///
 /// [forwarding a matched fragment]: https://doc.rust-lang.org/reference/macros-by-example.html#forwarding-a-matched-fragment
 #[macro_export]
+#[deprecated(note = "Should be in a separate crate")]
 macro_rules! maybe_const_fn {
     ($(
         #[cfg_const($cond:meta)]

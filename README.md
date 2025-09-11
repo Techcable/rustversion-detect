@@ -4,7 +4,8 @@
 This crate provides a simple API for detecting the rustc
 compiler version.
 
-It is primarily intended for build scripts, but is also usable at runtime.
+It is only intended for use at build time,
+because it requires executing the `rustc` compiler.
 
 The implementation is forked from the [`rustversion` crate], but with proc-macro code removed.
 
