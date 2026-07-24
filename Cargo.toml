@@ -13,7 +13,7 @@ repository = "https://github.com/Techcable/rustversion-detect"
 # there are few good reasons for doing so.
 rust-version = "1.31"
 # Exclude compile benchmarks & git metadata
-exclude = ["/benchcompile", "/.github", ".gitignore"]
+exclude = [".gitignore", "/.github", "/benchcompile"]
 
 [package.metadata.cdocs.rs]
 targets = ["x86_64-unknown-linux-gnu"]

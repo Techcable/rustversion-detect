@@ -132,3 +132,14 @@ jobs:
         run: |
           cargo fmt --all -- --check
 
+  # This was added by Techcable (not by dtolnay)
+  tombi:
+    # Only run on PRs if the source branch is on someone else's repo
+    if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.rep>
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: tombi-toml/setup-tombi@v1.2.3
+      - run: |
+          tombi format --check
