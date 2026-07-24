@@ -1,22 +1,45 @@
 # rustversion-detect
 <!-- cargo-rdme start -->
 
-This crate provides a simple API for detecting the rustc
-compiler version.
+Parses the output of `rustc --version` for use in build scripts.
 
-It is only intended for use at build time,
-because it requires executing the `rustc` compiler.
+The parsed output is cached in a static variable,
+so `rustc` will only be invoked once no matter how many build scripts use this crate.
+This gives an advantage over using [`autocfg` crate][`autocfg`] or performing ad-hoc detection,
+as these require re-running `rustc` for each build scripts.
 
-The implementation is forked from v1.0.17 of the [`rustversion` crate],
-but with proc-macro code removed.
+This crate originated as a fork of the [dtolnay's `rustversion` crate][`rustversion`] (v1.0.17),
+but with the proc-macro code removed and version detection moved to runtime.
+Moving the version detection logic to runtime means that this crate
+does not need its own build script,
+reducing compile times compared to using the [`rustversion`] macros in a build script.
 
-[`rustversion` crate]: https://github.com/dtolnay/rustversion
+[`rustversion`]: https://github.com/dtolnay/rustversion
+[`autocfg`]: https://github.com/cuviper/autocfg
 
 ## Dependency
 Add the following to your build script:
 ```toml
 [build-dependencies]
-rustversion-detect = "0.1"
+rustversion-detect = "0.2"
+```
+
+## Examples
+```rust
+pub fn main() {
+    // by default rust re-runs the build script if any source file changes
+    // this directive indicates that the build script only needs
+    // to be rerun if the compiler flags change (or if the build script itself changes)
+    println!("cargo:rerun-if-changed=build.rs");
+
+    // Rust 1.80 requires listing all possibilities using this directive
+    println!("cargo:rustc-check-cfg=cfg(use_nightly)");
+
+    let version = rustversion_detect::detect_version().unwrap();
+    if version.is_nightly() {
+        println!("cargo:rustc-cfg=use_nightly");
+    }
+}
 ```
 
 <!-- cargo-rdme end -->

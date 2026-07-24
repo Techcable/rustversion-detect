@@ -15,6 +15,7 @@ A title is required for publishing a github release, so all versions should have
 - The `maybe_const_fn!` macro has been moved to its own crate.
   For compatibility reasons, this macro is re-exported from the `rustversion-detect` crate (but still deprecated).
   - It is possible to disable this re-exporting and remove the dependency by turning off the default feature `compat-maybe-const-fn`.
+- Improved crate-level documentation and README.
 
 ### Removed
 - Hide documentation for deprecated `maybe_const_fn!` macro.
