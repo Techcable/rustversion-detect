@@ -18,8 +18,31 @@
 use std::error::Error;
 use std::fmt::{self, Display};
 
-#[macro_use]
-mod macros;
+/// Re-exports `maybe_const_fn!` from the other crate.
+///
+/// Needs to be redeclaraton rather than a re-export in order
+/// to properly give the deprecation warning. See rust-lang/rust#30827
+/// This is fine since the docs are hidden
+/// and it will be removed soon anyways.
+#[cfg(feature = "compat-maybe-const-fn")]
+#[deprecated(note = "Should be in a separate crate")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! maybe_const_fn {
+    ($($x:tt)*) => {
+        $crate::__impl_maybe_const_fn::maybe_const_fn!($($x)*);
+    };
+}
+
+/// Private re-export of `maybe_const_fn` crate.
+///
+/// Needed because the `maybe_const_fn!` macro delegates to it.
+/// Delegation is used rather than a direct re-export in order to properly
+/// trigger the deprecation warning.
+#[doc(hidden)]
+#[cfg(feature = "compat-maybe-const-fn")]
+pub extern crate maybe_const_fn as __impl_maybe_const_fn;
+
 mod build;
 pub mod date;
 pub mod version;
