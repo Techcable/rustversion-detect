@@ -4,7 +4,8 @@
 //! It is only intended for use at build time,
 //! because it requires executing the `rustc` compiler.
 //!
-//! The implementation is forked from the [`rustversion` crate], but with proc-macro code removed.
+//! The implementation is forked from v1.0.17 of the [`rustversion` crate],
+//! but with proc-macro code removed.
 //!
 //! [`rustversion` crate]: https://github.com/dtolnay/rustversion
 //!
