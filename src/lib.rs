@@ -14,7 +14,11 @@
 //! [build-dependencies]
 //! rustversion-detect = "0.1"
 //! ```
-#![deny(missing_docs)]
+// These lints indicate serious problems which I would normally mark as #[deny(...)].
+// However, failing the build could cause problems for users of this library.
+#![warn(
+    missing_docs,
+)]
 use std::error::Error;
 use std::fmt::{self, Display};
 
