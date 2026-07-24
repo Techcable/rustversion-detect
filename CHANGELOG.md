@@ -11,6 +11,9 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+### Removed
+- Hide documentation for deprecated `maybe_const_fn!` macro.
+
 ## 0.2.0 - 2025-09-10
 Move version detection to runtime.
 

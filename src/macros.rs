@@ -134,6 +134,7 @@
 /// [forwarding a matched fragment]: https://doc.rust-lang.org/reference/macros-by-example.html#forwarding-a-matched-fragment
 #[macro_export]
 #[deprecated(note = "Should be in a separate crate")]
+#[doc(hidden)] // deprecated and will be removed soon
 macro_rules! maybe_const_fn {
     ($(
         #[cfg_const($cond:meta)]
