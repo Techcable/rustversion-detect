@@ -20,6 +20,10 @@ exclude = [".gitignore", "/.github", "/benchcompile"]
 targets = ["x86_64-unknown-linux-gnu"]
 rustdoc-args = ["--generate-link-to-definition"]
 
+[[test]]
+name = "test_const"
+required-features = ["compat-maybe-const-fn"]
+
 [dependencies]
 # Used only for backwards compatibility
 maybe-const-fn = { version = "0.1.1", optional = true }
@@ -30,7 +34,3 @@ default = ["compat-maybe-const-fn"]
 # This was added in v0.2.1 and is on by default for compatibility for v0.2.0.
 # It will be removed in the next semver-breaking release.
 compat-maybe-const-fn = ["maybe-const-fn"]
-
-[[test]]
-name = "test_const"
-required-features = ["compat-maybe-const-fn"]
