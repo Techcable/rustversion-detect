@@ -13,14 +13,25 @@ pub fn determine_version() -> Result<RustVersion, VersionDetectionError> {
     let wrapped_rustc = rustc_wrapper.iter().chain(iter::once(&rustc));
 
     let mut is_clippy_driver = false;
+    let mut is_mirai = false;
     loop {
-        let mut wrapped_rustc = wrapped_rustc.clone();
-        let mut command = Command::new(wrapped_rustc.next().unwrap());
-        command.args(wrapped_rustc);
+        let mut command;
+        if is_mirai {
+            command = Command::new(&rustc);
+        } else {
+            let mut wrapped_rustc = wrapped_rustc.clone();
+            command = Command::new(wrapped_rustc.next().unwrap());
+            command.args(wrapped_rustc);
+        }
         if is_clippy_driver {
             command.arg("--rustc");
         }
         command.arg("--version");
+
+        // Allow wrapper scripts or alternate compilers to tell that this is
+        // `rustversion` running --version, so that they can stick to rustc's
+        // version format. https://github.com/dtolnay/rustversion/issues/67
+        command.env("RUSTVERSION", "1");
 
         let output = match command.output() {
             Ok(output) => output,
@@ -49,8 +60,14 @@ pub fn determine_version() -> Result<RustVersion, VersionDetectionError> {
             rustc::ParseResult::OopsClippy if !is_clippy_driver => {
                 is_clippy_driver = true;
                 continue;
-            }
-            rustc::ParseResult::Unrecognized | rustc::ParseResult::OopsClippy => {
+            },
+            rustc::ParseResult::OopsMirai if !is_mirai && rustc_wrapper.is_some() => {
+                is_mirai = true;
+                continue;
+            },
+            rustc::ParseResult::Unrecognized
+            | rustc::ParseResult::OopsClippy
+            | rustc::ParseResult::OopsMirai => {
                 return Err(crate::VersionDetectionError::new(format!(
                     "Error: unexpected output from `rustc --version`: {:?}\n\n\
                     Please file an issue in https://github.com/Techcable/rustversion-detect",

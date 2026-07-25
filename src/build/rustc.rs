@@ -3,6 +3,7 @@ use crate::{Date, RustVersion};
 pub enum ParseResult {
     Success(RustVersion),
     OopsClippy,
+    OopsMirai,
     Unrecognized,
 }
 
@@ -13,6 +14,7 @@ pub fn parse(string: &str) -> ParseResult {
     match words.next() {
         Some("rustc") => {}
         Some(word) if word.starts_with("clippy") => return ParseResult::OopsClippy,
+        Some("mirai") => return ParseResult::OopsMirai,
         Some(_) | None => return ParseResult::Unrecognized,
     }
 
@@ -60,6 +62,7 @@ fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<RustVersion> {
     })
 }
 
+/// Mirrors the `tests/test_parse.rs` integration test in rustversion.
 #[cfg(test)]
 mod test {
     use super::*;
@@ -168,7 +171,7 @@ mod test {
         for (string, expected) in cases {
             match parse(string) {
                 ParseResult::Success(version) => assert_eq!(version, *expected),
-                ParseResult::OopsClippy | ParseResult::Unrecognized => {
+                ParseResult::OopsClippy | ParseResult::OopsMirai | ParseResult::Unrecognized => {
                     panic!("unrecognized: {:?}", string);
                 }
             }

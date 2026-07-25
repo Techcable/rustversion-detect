@@ -5,8 +5,11 @@
 //! This gives an advantage over using [`autocfg` crate][`autocfg`] or performing ad-hoc detection,
 //! as these require re-running `rustc` for each build scripts.
 //!
-//! This crate originated as a fork of the [dtolnay's `rustversion` crate][`rustversion`] (v1.0.17),
-//! but with the proc-macro code removed and version detection moved to runtime.
+//! This crate originated as a fork of [dtolnay's `rustversion` crate][`rustversion`],
+//! but with the proc-macro code removed and version detection moved from the build script to runtime.
+//! The core version detection logic has been kept up to date with upstream changes.
+//! It currently mirrors rustversion v1.0.23.
+//!
 //! Moving the version detection logic to runtime means that this crate
 //! does not need its own build script,
 //! reducing compile times compared to using the [`rustversion`] macros in a build script.

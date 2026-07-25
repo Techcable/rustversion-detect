@@ -11,6 +11,22 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+### `rustversion` logic update
+Updated version detection logic to mirror [`rustversion` v1.0.23] (previously [v1.0.17][rustversion v1.0.17]).
+
+This includes the following changes:
+- Support for the [`mirai`] compiler wrapper.
+- Set `RUSTVERSION=1` during `rustc --version` command (fixes [rustversion#67])
+
+Note that only changes to sources in the `build/` subdirectory of rustversion
+are actually applicable to `rustversion-detect`.
+Even then, some changes are not needed here (ex. no need to workaround `-Zfmt-debug=none`).
+
+[`mirai`]: https://github.com/facebookexperimental/MIRAI
+[rustversion#67]: https://github.com/dtolnay/rustversion/issues/67
+[`rustversion` v1.0.23]: https://github.com/dtolnay/rustversion/releases/tag/1.0.23
+[rustversion v1.0.17]: https://github.com/dtolnay/rustversion/releases/tag/1.0.17
+
 ### Added
 - Add `#[must_use]` annotations to most public methods.
 
