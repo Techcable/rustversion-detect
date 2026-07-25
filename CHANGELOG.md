@@ -11,6 +11,9 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+## 0.2.2 - 2026-07-24
+Pull version detection changes from `rustversion` v1.0.23.
+
 ### `rustversion` logic update
 Updated version detection logic to mirror [`rustversion` v1.0.23] (previously [v1.0.17][rustversion v1.0.17]).
 
