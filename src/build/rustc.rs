@@ -1,4 +1,3 @@
-use crate::Channel::*;
 use crate::{Date, RustVersion};
 
 pub enum ParseResult {
@@ -21,6 +20,8 @@ pub fn parse(string: &str) -> ParseResult {
 }
 
 fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<RustVersion> {
+    use crate::Channel::{Stable, Development, Beta, Nightly};
+
     let mut version_channel = words.next()?.split('-');
     let version = version_channel.next()?;
     let channel = version_channel.next();
@@ -65,6 +66,8 @@ mod test {
 
     #[test]
     fn test_parse() {
+        use crate::Channel::*;
+
         let cases = &[
             (
                 "rustc 1.0.0 (a59de37e9 2015-05-13) (built 2015-05-14)",

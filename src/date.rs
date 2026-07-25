@@ -278,7 +278,7 @@ mod test {
             assert!(before.is_before(after), "{} & {}", before, after);
             assert!(after.is_since(before), "{} & {}", before, after);
             // check equal dates
-            for &date in [before, after].iter() {
+            for &date in &[before, after] {
                 assert!(date.is_since(date), "{}", date);
                 assert!(!date.is_before(date), "{}", date);
             }

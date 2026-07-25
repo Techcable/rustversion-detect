@@ -94,12 +94,10 @@ pub fn detect_version() -> Result<crate::RustVersion, VersionDetectionError> {
         let lock = state::state_mutex()
             .read()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        match &*lock {
-            Some(cached) => return Ok(*cached),
-            _ => {
-                // fallthrough to detection
-            }
+        if let Some(cached) = &*lock {
+            return Ok(*cached);
         }
+        // release the lock & fallthrough to detection
     }
     match build::determine_version() {
         Ok(success) => {

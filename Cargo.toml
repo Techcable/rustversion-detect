@@ -34,3 +34,18 @@ default = ["compat-maybe-const-fn"]
 # This was added in v0.2.1 and is on by default for compatibility for v0.2.0.
 # It will be removed in the next semver-breaking release.
 compat-maybe-const-fn = ["maybe-const-fn"]
+
+[lints.clippy]
+## groups ##
+cargo = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+
+# excessively pedantic
+too-many-lines = "allow"
+cast-lossless = "allow"
+
+# temporary disabled
+must-use-candidate = "allow"
+
+# cannot use these on our MSRV
+cast-possible-truncation = "allow" # TryFrom requires v1.34

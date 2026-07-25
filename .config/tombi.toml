@@ -2,3 +2,15 @@
 indent-width = 4
 line-width = 120
 trailing-comment-space-width = 1
+
+[[schemas]]
+path = "tombi://www.schemastore.org/cargo.json"
+include = ["*/Cargo.toml"]
+
+# Exclude lints from tombi sorting because
+# there is no equivalent to `cargo sort --grouped`
+[[schemas.overrides]]
+targets = ["lints.*"]
+
+[schemas.overrides.format.rules]
+table-keys-order.enabled = false

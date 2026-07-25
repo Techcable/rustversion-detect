@@ -423,7 +423,7 @@ mod test {
     #[cfg(test)]
     impl RustVersion {
         #[inline]
-        pub(crate) fn to_spec(&self) -> StableVersionSpec {
+        pub(crate) fn to_spec(self) -> StableVersionSpec {
             StableVersionSpec::patch(self.major, self.minor, self.patch)
         }
     }
