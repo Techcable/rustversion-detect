@@ -11,6 +11,11 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+### Removed
+- *BREAKING*: Remove deprecated `maybe_const_fn!` macro.
+  - Remove `compat-maybe-const-fn` feature, which is now unnecessary.
+  - Eliminates our only dependency.
+
 ## 0.2.2 - 2026-07-24
 Pull version detection changes from `rustversion` v1.0.23.
 
