@@ -4,7 +4,9 @@ from pathlib import Path
 
 @task
 def check(ctx):
-    ctx.run("cargo clippy --workspace --all-features", pty=True, echo=True)
+    ctx.run(
+        "cargo clippy --workspace --all-targets --all-features", pty=True, echo=True
+    )
     rdme(ctx, check=True)
     format(ctx, check=True)
 
