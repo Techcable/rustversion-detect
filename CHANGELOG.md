@@ -11,6 +11,9 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+## 0.2.1 - 2026-07-24
+Split `maybe_const_fn!` into its own crate.
+
 ### Changes
 - The `maybe_const_fn!` macro has been moved to its own crate.
   For compatibility reasons, this macro is re-exported from the `rustversion-detect` crate (but still deprecated).
