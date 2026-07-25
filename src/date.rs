@@ -39,6 +39,7 @@ impl Date {
     /// ```
     ///
     #[inline]
+    #[must_use]
     pub fn new(year: u32, month: u32, day: u32) -> Self {
         match Self::try_new(year, month, day) {
             Ok(x) => x,
@@ -88,6 +89,7 @@ impl Date {
     /// assert!(Date::new(2024, 11, 16).is_since(Date::new(2024, 7, 28)));
     /// ```
     #[inline]
+    #[must_use]
     pub fn is_since(&self, start: Date) -> bool {
         *self >= start
     }
@@ -104,24 +106,28 @@ impl Date {
     /// assert!(Date::new(2024, 11, 14).is_before(Date::new(2024, 11, 17)));
     /// ```
     #[inline]
+    #[must_use]
     pub fn is_before(&self, end: Date) -> bool {
         *self < end
     }
 
     /// The year (AD/CE), in the range `1..`
     #[inline]
+    #[must_use]
     pub fn year(&self) -> u32 {
         self.year
     }
 
     /// The month of the year, in the range `1..=12`.
     #[inline]
+    #[must_use]
     pub fn month(&self) -> u32 {
         self.month as u32
     }
 
     /// The day of the year, in the range `1..=31`.
     #[inline]
+    #[must_use]
     pub fn day(&self) -> u32 {
         self.day as u32
     }
@@ -288,24 +294,24 @@ mod test {
     #[test]
     #[should_panic(expected = "Invalid year")]
     fn invalid_year() {
-        Date::new(0, 7, 18);
+        let _ = Date::new(0, 7, 18);
     }
 
     #[test]
     #[should_panic(expected = "Invalid month")]
     fn invalid_month() {
-        Date::new(2014, 13, 18);
+        let _ = Date::new(2014, 13, 18);
     }
 
     #[test]
     #[should_panic(expected = "Invalid day of month")]
     fn invalid_date() {
-        Date::new(2014, 7, 36);
+        let _ = Date::new(2014, 7, 36);
     }
 
     #[test]
     #[should_panic(expected = "Invalid day of month")]
     fn contextually_invalid_date() {
-        Date::new(2014, 2, 30);
+        let _ = Date::new(2014, 2, 30);
     }
 }

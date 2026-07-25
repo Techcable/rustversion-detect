@@ -24,6 +24,7 @@ impl StableVersionSpec {
     /// # Panics
     /// Panics if the major version is not `1`.
     #[inline]
+    #[must_use]
     pub fn minor(major: u32, minor: u32) -> Self {
         check_major_version(major);
         StableVersionSpec {
@@ -38,6 +39,7 @@ impl StableVersionSpec {
     /// # Panics
     /// Panics if the major version is not `1`.
     #[inline]
+    #[must_use]
     pub fn patch(major: u32, minor: u32, patch: u32) -> Self {
         check_major_version(major);
         StableVersionSpec {
@@ -52,6 +54,7 @@ impl StableVersionSpec {
     /// If the patch version is not specified,
     /// it is assumed to be zero.
     #[inline]
+    #[must_use]
     pub fn to_version(&self) -> RustVersion {
         RustVersion::stable(self.major, self.minor, self.patch.unwrap_or(0))
     }
@@ -136,6 +139,7 @@ impl RustVersion {
     ///
     /// The major version must be 1.0.
     #[inline]
+    #[must_use]
     pub fn stable(major: u32, minor: u32, patch: u32) -> RustVersion {
         check_major_version(major);
         RustVersion {
@@ -163,6 +167,7 @@ impl RustVersion {
     /// assert!(RustVersion::stable(1, 48, 0).is_since_minor_version(1, 40));
     /// ```
     #[inline]
+    #[must_use]
     pub fn is_since_minor_version(&self, major: u32, minor: u32) -> bool {
         self.is_since_stable(StableVersionSpec::minor(major, minor))
     }
@@ -182,6 +187,7 @@ impl RustVersion {
     /// assert!(RustVersion::stable(1, 48, 0).is_since_patch_version(1, 40, 5));
     /// ```
     #[inline]
+    #[must_use]
     pub fn is_since_patch_version(&self, major: u32, minor: u32, patch: u32) -> bool {
         self.is_since_stable(StableVersionSpec::patch(major, minor, patch))
     }
@@ -205,6 +211,7 @@ impl RustVersion {
     /// assert!(RustVersion::stable(1, 48, 0).is_since_stable(StableVersionSpec::patch(1, 32, 7)))
     /// ```
     #[inline]
+    #[must_use]
     pub fn is_since_stable(&self, spec: StableVersionSpec) -> bool {
         self.major > spec.major
             || (self.major == spec.major
@@ -227,6 +234,7 @@ impl RustVersion {
     ///
     /// Behavior is (mostly) equivalent to `#[rustversion::before($spec)]`
     #[inline]
+    #[must_use]
     pub fn is_before_stable(&self, spec: StableVersionSpec) -> bool {
         !self.is_since_stable(spec)
     }
@@ -240,6 +248,7 @@ impl RustVersion {
     ///
     /// The major version must always be one, or a panic could happen.
     #[inline]
+    #[must_use]
     pub fn is_before_minor_version(&self, major: u32, minor: u32) -> bool {
         self.is_before_stable(StableVersionSpec::minor(major, minor))
     }
@@ -251,6 +260,7 @@ impl RustVersion {
     ///
     /// The major version must always be one, or a panic could happen.
     #[inline]
+    #[must_use]
     pub fn is_before_patch_version(&self, major: u32, minor: u32, patch: u32) -> bool {
         self.is_before_stable(StableVersionSpec::patch(major, minor, patch))
     }
@@ -266,6 +276,7 @@ impl RustVersion {
     ///
     /// See also [`Date::is_since`].
     #[inline]
+    #[must_use]
     pub fn is_since_nightly(&self, start: Date) -> bool {
         match self.channel {
             Channel::Nightly { date } => date.is_since(start),
@@ -284,6 +295,7 @@ impl RustVersion {
     ///
     /// See also [`Date::is_before`].
     #[inline]
+    #[must_use]
     pub fn is_before_nightly(&self, start: Date) -> bool {
         match self.channel {
             Channel::Nightly { date } => date <= start,
@@ -295,24 +307,28 @@ impl RustVersion {
 
     /// Check if this is a nightly compiler version.
     #[inline]
+    #[must_use]
     pub fn is_nightly(&self) -> bool {
         self.channel.is_nightly()
     }
 
     /// Check if this is a stable compiler version.
     #[inline]
+    #[must_use]
     pub fn is_stable(&self) -> bool {
         self.channel.is_stable()
     }
 
     /// Check if this is a beta compiler version.
     #[inline]
+    #[must_use]
     pub fn is_beta(&self) -> bool {
         self.channel.is_beta()
     }
 
     /// Check if this is a development compiler version.
     #[inline]
+    #[must_use]
     pub fn is_development(&self) -> bool {
         self.channel.is_development()
     }
@@ -367,6 +383,7 @@ pub enum Channel {
 impl Channel {
     /// Check if this is the nightly channel.
     #[inline]
+    #[must_use]
     pub fn is_nightly(&self) -> bool {
         // NOTE: Can't use matches! because of minimum rust version
         match *self {
@@ -377,6 +394,7 @@ impl Channel {
 
     /// Check if this is the stable channel.
     #[inline]
+    #[must_use]
     pub fn is_stable(&self) -> bool {
         match *self {
             Channel::Stable => true,
@@ -386,6 +404,7 @@ impl Channel {
 
     /// Check if this is the beta channel.
     #[inline]
+    #[must_use]
     pub fn is_beta(&self) -> bool {
         match *self {
             Channel::Beta => true,
@@ -395,6 +414,7 @@ impl Channel {
 
     /// Check if this is the development channel.
     #[inline]
+    #[must_use]
     pub fn is_development(&self) -> bool {
         match *self {
             Channel::Development => true,

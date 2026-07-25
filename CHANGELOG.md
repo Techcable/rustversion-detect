@@ -11,6 +11,9 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+### Added
+- Add `#[must_use]` annotations to most public methods.
+
 ## 0.2.1 - 2026-07-24
 Split `maybe_const_fn!` into its own crate.
 
