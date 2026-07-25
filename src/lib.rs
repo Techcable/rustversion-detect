@@ -21,7 +21,7 @@
 //! Add the following to your build script:
 //! ```toml
 //! [build-dependencies]
-//! rustversion-detect = "0.2"
+//! rustversion-detect = "0.3"
 //! ```
 //!
 //! # Examples

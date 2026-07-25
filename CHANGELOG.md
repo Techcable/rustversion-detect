@@ -11,6 +11,12 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+## 0.3.0 - 2026-07-24
+Remove deprecated `maybe_const_fn!` macro.
+
+I will publish final version in the 0.2.x series which forwards to version 0.3.
+This will ensure that the cached results are shared across both crate versions.
+
 ### Removed
 - *BREAKING*: Remove deprecated `maybe_const_fn!` macro.
   - Remove `compat-maybe-const-fn` feature, which is now unnecessary.
