@@ -17,12 +17,6 @@ def rdme(ctx, check=False, force=False):
     if force:
         flags += " --force"
     ctx.run("cargo rdme" + flags, pty=True, echo=True)
-    # TODO: Add CI for this
-    ctx.run(
-        "cargo rdme --manifest-path maybe-const-fn/Cargo.toml" + flags,
-        pty=True,
-        echo=True,
-    )
 
 
 @task
