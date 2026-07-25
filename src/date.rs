@@ -57,21 +57,19 @@ impl Date {
             return Err(DateValidationError {
                 field: InvalidDateField::Year,
                 value: year,
-            })
+            });
         }
         if month < 1 || month > 12 {
             return Err(DateValidationError {
                 field: InvalidDateField::Month,
                 value: month,
-            })
+            });
         }
         if day < 1 || day > max_days_of_month(month) {
             return Err(DateValidationError {
-                field: InvalidDateField::DayOfMonth {
-                    month
-                },
+                field: InvalidDateField::DayOfMonth { month },
                 value: day,
-            })
+            });
         }
         Ok(Date {
             month: month as u8,
@@ -145,32 +143,27 @@ impl FromStr for Date {
             let mut raw_parts = full_text.split('-');
             let mut parts: [Option<u32>; 3] = [None; 3];
             for part in &mut parts {
-                let raw_part = raw_parts.next()
-                    .ok_or(ParseErrorReason::MalformedSyntax)?;
+                let raw_part = raw_parts.next().ok_or(ParseErrorReason::MalformedSyntax)?;
                 *part = Some(raw_part.parse().map_err(|cause| {
                     ParseErrorReason::NumberParseFailure {
                         text: raw_part.into(),
-                        cause
+                        cause,
                     }
                 })?);
             }
             if raw_parts.next().is_some() {
                 return Err(ParseErrorReason::MalformedSyntax);
             }
-            Date::try_new(
-                parts[0].unwrap(),
-                parts[1].unwrap(),
-                parts[2].unwrap()
-            ).map_err(ParseErrorReason::ValidationFailure)
+            Date::try_new(parts[0].unwrap(), parts[1].unwrap(), parts[2].unwrap())
+                .map_err(ParseErrorReason::ValidationFailure)
         }
         match do_parse(full_text) {
             Ok(res) => Ok(res),
             Err(reason) => Err(DateParseError {
                 full_text: full_text.into(),
-                reason
-            })
+                reason,
+            }),
         }
-
     }
 }
 /// An error that occurs parsing a [`Date`].
@@ -203,13 +196,14 @@ impl Display for DateParseError {
         match self.reason {
             ParseErrorReason::MalformedSyntax => {
                 write!(f, "Not in ISO 8601 format (example: 2025-12-31)")
-            },
-            ParseErrorReason::NumberParseFailure { ref text, ref cause } => {
-                write!(f, "Failed to parse `{}` as number ({})", text, cause)
-            },
-            ParseErrorReason::ValidationFailure(ref cause) => {
-                Display::fmt(cause, f)
             }
+            ParseErrorReason::NumberParseFailure {
+                ref text,
+                ref cause,
+            } => {
+                write!(f, "Failed to parse `{}` as number ({})", text, cause)
+            }
+            ParseErrorReason::ValidationFailure(ref cause) => Display::fmt(cause, f),
         }
     }
 }
@@ -223,7 +217,7 @@ fn max_days_of_month(x: u32) -> u32 {
     match x {
         1 => 31,
         2 => 29,
-        _ => 30 + ((x + 1) % 2)
+        _ => 30 + ((x + 1) % 2),
     }
 }
 /// An error that occurs in [`Date::try_new`] when an invalid date is encountered.
@@ -237,20 +231,18 @@ impl std::error::Error for DateValidationError {}
 enum InvalidDateField {
     Year,
     Month,
-    DayOfMonth {
-        month: u32,
-    }
+    DayOfMonth { month: u32 },
 }
 impl Display for DateValidationError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let field_name = match self.field {
             InvalidDateField::Year => "year",
             InvalidDateField::Month => "month",
-            InvalidDateField::DayOfMonth { .. } => "day of month"
+            InvalidDateField::DayOfMonth { .. } => "day of month",
         };
         write!(f, "Invalid {} `{}`", field_name, self.value)?;
         match self.field {
-            InvalidDateField::Year | InvalidDateField::Month => {},
+            InvalidDateField::Year | InvalidDateField::Month => {}
             InvalidDateField::DayOfMonth { month } => {
                 write!(f, " for month {}", month)?;
             }
@@ -310,7 +302,6 @@ mod test {
     fn invalid_date() {
         Date::new(2014, 7, 36);
     }
-
 
     #[test]
     #[should_panic(expected = "Invalid day of month")]

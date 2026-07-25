@@ -1,0 +1,7 @@
+# the `ignore` option is unstable
+unstable_features = true
+ignore = [
+    # taken from dtonlay/rustversion,
+    # which does not use rustfmt
+    "src/build/*.rs",
+]
