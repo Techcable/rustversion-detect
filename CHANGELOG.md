@@ -11,6 +11,10 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+### Added
+- Give detailed error messages when version parsing fails.
+  Causes our version parsing to diverge from upstream rustversion.
+
 ## 0.3.0 - 2026-07-24
 Remove deprecated `maybe_const_fn!` macro.
 

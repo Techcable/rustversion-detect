@@ -4,7 +4,7 @@ pub enum ParseResult {
     Success(RustVersion),
     OopsClippy,
     OopsMirai,
-    Unrecognized,
+    Unrecognized(Option<String>),
 }
 
 pub fn parse(string: &str) -> ParseResult {
@@ -15,13 +15,18 @@ pub fn parse(string: &str) -> ParseResult {
         Some("rustc") => {}
         Some(word) if word.starts_with("clippy") => return ParseResult::OopsClippy,
         Some("mirai") => return ParseResult::OopsMirai,
-        Some(_) | None => return ParseResult::Unrecognized,
+        Some(word) => return ParseResult::Unrecognized(Some(format!("Unknown word {word:?}"))),
+        None => return ParseResult::Unregonized(Some("Missing initial word".into())),
     }
 
-    parse_words(&mut words).map_or(ParseResult::Unrecognized, ParseResult::Success)
+    match parse_words(&mut words) {
+        None => ParseResult::Unrecognized(None),
+        Some(Ok(version)) => ParseResult::Success(version),
+        Some(Err(desc)) => ParseResult::Unrecognized(Some(desc)),
+    }
 }
 
-fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<RustVersion> {
+fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<Result<RustVersion, String>> {
     use crate::Channel::{Stable, Development, Beta, Nightly};
 
     let mut version_channel = words.next()?.split('-');
@@ -33,6 +38,7 @@ fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<RustVersion> {
     let minor = digits.next()?.parse().ok()?;
     let patch = digits.next().unwrap_or("0").parse().ok()?;
 
+    let bad_nightly_fmt_err = Some(Err("Unexpected nightly version format".into()));
     let channel = match channel {
         None => Stable,
         Some("dev") => Development,
@@ -43,23 +49,23 @@ fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<RustVersion> {
                 Some(date) if date.ends_with(')') => {
                     match date[..date.len() - 1].parse::<Date>() {
                         Ok(date) => Nightly { date },
-                        Err(_) => return None,
+                        Err(cause) => return Some(Err(format!("Failed to parse date: {cause}"))),
                     }
                 }
-                None | Some(_) => return None,
+                None | Some(_) => return bad_nightly_fmt_err,
             },
-            Some(_) => return None,
+            Some(_) => return bad_nightly_fmt_err,
             None => Development,
         },
-        Some(_) => return None,
+        Some(other) => return Some(Err(format!("Unknown channel {other:?}"))),
     };
 
-    Some(RustVersion {
+    Some(Ok(RustVersion {
         major,
         minor,
         patch,
         channel,
-    })
+    }))
 }
 
 /// Mirrors the `tests/test_parse.rs` integration test in rustversion.
@@ -171,8 +177,11 @@ mod test {
         for (string, expected) in cases {
             match parse(string) {
                 ParseResult::Success(version) => assert_eq!(version, *expected),
-                ParseResult::OopsClippy | ParseResult::OopsMirai | ParseResult::Unrecognized => {
+                ParseResult::OopsClippy | ParseResult::OopsMirai | ParseResult::Unrecognized(None) => {
                     panic!("unrecognized: {:?}", string);
+                },
+                ParseResult::Unrecognized(Some(desc)) => {
+                    panic!("unrecognized: {:?} ({desc})", string);
                 }
             }
         }
