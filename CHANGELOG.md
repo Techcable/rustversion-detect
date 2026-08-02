@@ -11,6 +11,11 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+## 0.3.1 - 2026-08-01
+Accept July 31st as a valid date.
+
+I plan to yank old versions without this fix.
+
 ### Fixed
 - Relax day-of-month validation, so date `2026-07-31` is accepted (fixes [issue #10]).
 
