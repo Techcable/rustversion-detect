@@ -11,6 +11,11 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+### Fixed
+- Relax day-of-month validation, so date `2026-07-31` is accepted (fixes [issue #10]).
+
+[issue #10]: https://github.com/Techcable/rustversion-detect/issues/10
+
 ## 0.3.0 - 2026-07-24
 Remove deprecated `maybe_const_fn!` macro.
 
