@@ -65,7 +65,7 @@ pub fn determine_version() -> Result<RustVersion, VersionDetectionError> {
                 is_mirai = true;
                 continue;
             },
-            rustc::ParseResult::Unrecognized
+            rustc::ParseResult::Unrecognized(desc)
             | rustc::ParseResult::OopsClippy
             | rustc::ParseResult::OopsMirai => {
                 return Err(crate::VersionDetectionError::new(format!(
