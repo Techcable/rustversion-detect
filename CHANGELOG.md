@@ -24,6 +24,8 @@ I plan to yank old versions without this fix.
 ## 0.3.0 - 2026-07-24
 Remove deprecated `maybe_const_fn!` macro.
 
+**YANKED**: Does not include a fix for [issue #10](https://github.com/Techcable/rustversion-detect/issues/10).
+
 ### Removed
 - *BREAKING*: Remove deprecated `maybe_const_fn!` macro.
   - Remove `compat-maybe-const-fn` feature, which is now unnecessary.
