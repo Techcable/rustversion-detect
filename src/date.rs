@@ -66,7 +66,7 @@ impl Date {
                 value: month,
             });
         }
-        if day < 1 || day > max_days_of_month(month) {
+        if day < 1 || day > 31 {
             return Err(DateValidationError {
                 field: InvalidDateField::DayOfMonth { month },
                 value: day,
@@ -214,18 +214,6 @@ impl Display for DateParseError {
     }
 }
 
-/// Return the maximum numbers of days in the specified month,
-/// assuming that the Gregorian calendar is being used.
-///
-/// Does not take into account leap years.
-#[inline]
-fn max_days_of_month(x: u32) -> u32 {
-    match x {
-        1 => 31,
-        2 => 29,
-        _ => 30 + ((x + 1) % 2),
-    }
-}
 /// An error that occurs in [`Date::try_new`] when an invalid date is encountered.
 #[derive(Debug)]
 pub struct DateValidationError {
@@ -261,6 +249,23 @@ impl Display for DateValidationError {
 mod test {
     use super::*;
 
+    #[test]
+    fn parse_valid() {
+        macro_rules! check_valid {
+            ($($text:literal => $expected:expr),+ $(,)?) => {
+                $(
+                    assert_eq!(
+                        $text.parse::<Date>().expect(concat!("Date `", $text, "` is invalid")),
+                        $expected,
+                    );
+                )*
+            }
+        }
+        check_valid! {
+            "2026-07-31" => Date::new(2026, 7, 31),
+        }
+    }
+
     // (before, after)
     fn test_dates() -> Vec<(Date, Date)> {
         vec![
@@ -268,14 +273,6 @@ mod test {
             (Date::new(2024, 11, 14), Date::new(2024, 12, 7)),
             (Date::new(2024, 11, 14), Date::new(2024, 11, 17)),
         ]
-    }
-
-    #[test]
-    fn days_of_month() {
-        assert_eq!(max_days_of_month(1), 31);
-        assert_eq!(max_days_of_month(12), 31);
-        assert_eq!(max_days_of_month(2), 29);
-        assert_eq!(max_days_of_month(10), 31);
     }
 
     #[test]
@@ -307,11 +304,5 @@ mod test {
     #[should_panic(expected = "Invalid day of month")]
     fn invalid_date() {
         let _ = Date::new(2014, 7, 36);
-    }
-
-    #[test]
-    #[should_panic(expected = "Invalid day of month")]
-    fn contextually_invalid_date() {
-        let _ = Date::new(2014, 2, 30);
     }
 }

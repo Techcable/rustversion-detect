@@ -11,6 +11,12 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+### Fixed
+- Relax day-of-month validation, so date `2026-07-31` is accepted (fixes [issue #10]).
+  Backported from release v0.3.1.
+
+[issue #10]: https://github.com/Techcable/rustversion-detect/issues/10
+
 ## 0.2.2 - 2026-07-24
 Pull version detection changes from `rustversion` v1.0.23.
 
