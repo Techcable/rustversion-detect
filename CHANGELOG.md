@@ -11,6 +11,11 @@ A title is required for publishing a github release, so all versions should have
 
 ## Unreleased
 
+## 0.2.3 - 2026-08-01
+Backport date fixes from v0.3.1.
+
+I plan to yank old versions without this fix.
+
 ### Fixed
 - Relax day-of-month validation, so date `2026-07-31` is accepted (fixes [issue #10]).
   Backported from release v0.3.1.

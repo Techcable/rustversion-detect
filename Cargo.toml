@@ -1,6 +1,6 @@
 [package]
 name = "rustversion-detect"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["David Tolnay <dtolnay@gmail.com>", "Techcable"]
 categories = ["development-tools::build-utils"]
 keywords = ["autocfg", "cfg", "nightly", "rustc", "version"]
