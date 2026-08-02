@@ -69,7 +69,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@nightly
       - uses: taiki-e/install-action@cargo-rdme
       - run: cargo rdme --check
 
