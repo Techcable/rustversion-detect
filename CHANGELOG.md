@@ -33,8 +33,21 @@ Remove deprecated `maybe_const_fn!` macro.
 
 *NOTE*: Although promised in an early draft, using [`semver-trick`](https://github.com/dtolnay/semver-trick) would be counterproductive.
 
+## 0.2.3 - 2026-08-01
+Backport date fixes from v0.3.1.
+
+I plan to yank old versions without this fix.
+
+### Fixed
+- Relax day-of-month validation, so date `2026-07-31` is accepted (fixes [issue #10]).
+  Backported from release v0.3.1.
+
+[issue #10]: https://github.com/Techcable/rustversion-detect/issues/10
+
 ## 0.2.2 - 2026-07-24
 Pull version detection changes from `rustversion` v1.0.23.
+
+**YANKED**: Does not include a fix for [issue #10](https://github.com/Techcable/rustversion-detect/issues/10).
 
 ### `rustversion` logic update
 Updated version detection logic to mirror [`rustversion` v1.0.23] (previously [v1.0.17][rustversion v1.0.17]).
@@ -58,6 +71,9 @@ Even then, some changes are not needed here (ex. no need to workaround `-Zfmt-de
 ## 0.2.1 - 2026-07-24
 Split `maybe_const_fn!` into its own crate.
 
+**NOTE**: This version does not appear to be released to crates.io.
+          This is fine, because I otherwise would have yanked it since it does not include a fix for [issue #10](https://github.com/Techcable/rustversion-detect/issues/10).
+
 ### Changes
 - The `maybe_const_fn!` macro has been moved to its own crate.
   For compatibility reasons, this macro is re-exported from the `rustversion-detect` crate (but still deprecated).
@@ -71,6 +87,8 @@ Split `maybe_const_fn!` into its own crate.
 Move version detection to runtime.
 
 Avoids the need to wait for compilation of a build script.
+
+**YANKED**: Does not include a fix for [issue #10](https://github.com/Techcable/rustversion-detect/issues/10).
 
 ### Changes
 - Rewrite API to focus on use on runtime detection used in build scripts.
